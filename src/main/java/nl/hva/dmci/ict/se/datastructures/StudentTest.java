@@ -19,7 +19,7 @@ public class StudentTest {
         Random generator = new Random();
         int minGrade = 10;
         int maxGrade = 100;
-        int derp = 1;
+        int derp1 = 1;
         for (int i = studentNumberStart; i < (studentNumberStart + 10000); i++) {
             int number = generator.nextInt(maxGrade - minGrade + 1) + minGrade;
             double grade = (double)number / 10;
