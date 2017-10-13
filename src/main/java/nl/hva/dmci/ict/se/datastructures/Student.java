@@ -4,7 +4,7 @@ package nl.hva.dmci.ict.se.datastructures;
  * @author Donny Rozendal
  * 
  */
-public class Student {
+public class Student implements Comparable<Student>{
     
     private int studentNumber;
     private double cijfer;
@@ -30,10 +30,18 @@ public class Student {
         return cijfer;
     }
     
-    
-    
     @Override
     public String toString() {
         return "[" + studentNumber + "; " + cijfer + "]";
+    }
+
+    @Override
+    public int compareTo(Student student) {
+        if (this.cijfer > student.cijfer) return 1;
+        else if (this.cijfer < student.cijfer) return -1;
+        else {
+            if (this.studentNumber > student.studentNumber) return 1;
+            else return -1;
+        }
     }
 }
