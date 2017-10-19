@@ -34,7 +34,7 @@ public class Student implements Comparable<Student>{
     
     @Override
     public String toString() {
-        return "[" + studentNumber + "; " + cijfer + "]";
+        return "[" + studentNumber + "; " + klas + "; " + cijfer + "]";
     }
 
     @Override
