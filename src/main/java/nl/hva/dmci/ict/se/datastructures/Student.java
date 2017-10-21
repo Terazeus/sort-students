@@ -7,16 +7,16 @@ package nl.hva.dmci.ict.se.datastructures;
 public class Student implements Comparable<Student>{
     
     private int studentNumber;
-    private String klas;
+    private Klas klas;
     private double cijfer;
+    private Student next;
 
-    public Student(int studentNummer, String klas, double cijfer) {
+    public Student(int studentNummer, double cijfer) {
         if (studentNummer >= 50080001) {
             this.studentNumber = studentNummer;
         } else {
             throw new IllegalArgumentException("Het studentnummer moet groter zijn dan 5008001");
         }
-        this.klas = klas;
         if (cijfer >= 1.0 && cijfer <= 10.0) {
             this.cijfer = cijfer;
         } else {
@@ -28,13 +28,25 @@ public class Student implements Comparable<Student>{
         return studentNumber;
     }
 
+    public void setKlas(Klas klas) {
+        this.klas = klas;
+    }
+
     public double getCijfer() {
         return cijfer;
+    }
+
+    public Student getNext() {
+        return next;
+    }
+
+    public void setNext(Student next) {
+        this.next = next;
     }
     
     @Override
     public String toString() {
-        return "[" + studentNumber + "; " + klas + "; " + cijfer + "]";
+        return "[" + studentNumber + "; " + cijfer + "]";
     }
 
     @Override
