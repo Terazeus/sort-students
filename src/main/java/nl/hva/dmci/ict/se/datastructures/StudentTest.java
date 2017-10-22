@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  * @author Donny Rozendal
@@ -14,9 +16,15 @@ import java.util.Random;
  */
 public class StudentTest {
     
+    private static HashMap<String, Klas> groupMap = new HashMap<>();
+    private static Klas firstGroup;
+    private static Klas lastGroup;
+    private static final Random generator = new Random();
+    private static int studentNumberStart = 50080001;
+    
     public static void main(String[] args) {
-        final int studentNumberStart = 50080001;
-        final int numberOfStudents = 10;
+//        int studentNumberStart = 50080001;
+        final int numberOfStudents = 321;
         
         List<Student> school = new ArrayList<>();
         
@@ -25,7 +33,7 @@ public class StudentTest {
          * how many different groups there are.
          */
         String[] groups = KlasGenerator.maakKlassen(numberOfStudents);
-        HashMap<String, Klas> groupMap = new HashMap<>();
+        
         for (String group : groups) {
             groupMap.put(group, new Klas(group));
         }
@@ -33,16 +41,18 @@ public class StudentTest {
         /**
          * Makes a linked list of the groups.
          */
-        Klas firstGroup = null;
-        Klas lastGroup = null;
+//        Klas firstGroup = null;
+//        Klas lastGroup = null;
         for (Klas klas : groupMap.values()) {
             if (firstGroup == null) {
                 firstGroup = klas;
             } else if(lastGroup == null) {
                 firstGroup.setNext(klas);
+                klas.setPrevious(firstGroup);
                 lastGroup = klas;
             } else {
                 lastGroup.setNext(klas);
+                klas.setPrevious(lastGroup);
                 lastGroup = klas;
             }
         }
@@ -50,15 +60,16 @@ public class StudentTest {
          * Assign students to school with random grade and ascending student
          * number.
          */
-        Random generator = new Random();
-        int minGrade = 10;
-        int maxGrade = 100;
+//        Random generator = new Random();
+//        int minGrade = 10;
+//        int maxGrade = 100;
         
         for (int i = 0; i < numberOfStudents; i++) {
-            int number = generator.nextInt(maxGrade - minGrade + 1) + minGrade;
-            double grade = (double)number / 10;
+//            int number = generator.nextInt(maxGrade - minGrade + 1) + minGrade;
+//            double grade = (double)number / 10;
             
-            school.add(new Student(i + studentNumberStart, grade));
+            school.add(new Student(studentNumberStart, randomGrade()));
+            studentNumberStart++;
         }
         /**
          * Assigns the students to the groups in the linked list.
@@ -70,14 +81,17 @@ public class StudentTest {
                 if (tempKlas.getFirst() == null) {
                     tempKlas.setFirst(school.get(studentIndex));
                     studentIndex++;
+                    tempKlas.increaseSize();
                 } else if(tempKlas.getLast() == null) {
                     tempKlas.setLast(school.get(studentIndex));
                     tempKlas.getFirst().setNext(tempKlas.getLast());
                     studentIndex++;
+                    tempKlas.increaseSize();
                 } else {
                     tempKlas.getLast().setNext(school.get(studentIndex));
                     tempKlas.setLast(tempKlas.getLast().getNext());
                     studentIndex++;
+                    tempKlas.increaseSize();
                 }
                 tempKlas = tempKlas.getNext();
             }
@@ -126,33 +140,66 @@ public class StudentTest {
             System.out.println(student);
         });
         
-        Recursion check = new Recursion();
-        if (check.isStijgend(school)) {
-            System.out.println("Deze rij is stijgend!");
-        } else {
-            System.out.println("Deze rij is niet stijgend!");
-        }
+//        Recursion check = new Recursion();
+//        if (check.isStijgend(school)) {
+//            System.out.println("Deze rij is stijgend!");
+//        } else {
+//            System.out.println("Deze rij is niet stijgend!");
+//        }
         /**
          * Orders the groups
          */
-        //Klas tempKlas2 = firstGroup;
-        for (Klas tempKlas2 = firstGroup; tempKlas2.getNext() != null; tempKlas2 = tempKlas2.getNext()) {
-            if (tempKlas2.compareTo(tempKlas2.getNext()) > 0) {
-                if (tempKlas2 == firstGroup) {
-                    firstGroup = tempKlas2.getNext();
-                    tempKlas2.setNext(tempKlas2.getNext().getNext());
-                    tempKlas2.getNext().setNext(tempKlas2);
-                } else if (tempKlas2.getNext() == lastGroup) {
-                    tempKlas2.getNext().setNext(tempKlas2);
-                    tempKlas2.setNext(null);
-                    lastGroup = tempKlas2;
-                } else {
-                    tempKlas2.setNext(tempKlas2.getNext().getNext());
-                    tempKlas2.getNext().setNext(tempKlas2);
+        for (int i = 0; i < groupMap.size(); i++) {
+            for (Klas tempKlas = firstGroup; tempKlas.getNext() != null; tempKlas = tempKlas.getNext()) {
+                if (tempKlas.compareTo(tempKlas.getNext()) > 0) {
+                    if (tempKlas == firstGroup) {
+                        Klas tempNext = tempKlas.getNext();
+                        tempKlas.setNext(tempKlas.getNext().getNext());
+                        tempKlas.setPrevious(tempNext);
+                        tempKlas.getPrevious().setPrevious(null);
+                        tempKlas.getPrevious().setNext(tempKlas);
+                        tempKlas.getNext().setPrevious(tempKlas);
+                        firstGroup = tempKlas.getPrevious();
+                    } else if (tempKlas.getNext() == lastGroup) {
+                        Klas tempPrevious = tempKlas.getPrevious();
+                        tempKlas.setPrevious(tempKlas.getNext());
+                        tempKlas.setNext(null);
+                        tempKlas.getPrevious().setNext(tempKlas);
+                        tempKlas.getPrevious().setPrevious(tempPrevious);
+                        tempKlas.getPrevious().getPrevious().setNext(tempKlas.getPrevious());
+                        lastGroup = tempKlas;
+                        break;
+                    } else {
+                        Klas tempPrevious = tempKlas.getPrevious();
+                        tempKlas.setPrevious(tempKlas.getNext());
+                        tempKlas.setNext(tempKlas.getNext().getNext());
+                        tempKlas.getPrevious().setNext(tempKlas);
+                        tempKlas.getPrevious().setPrevious(tempPrevious);
+                        tempKlas.getPrevious().getPrevious().setNext(tempKlas.getPrevious());
+                        tempKlas.getNext().setPrevious(tempKlas);
+                    }
                 }
             }
         }
         System.out.println("");
+        System.out.println("Add a new student? y/n");
+        Scanner scan = new Scanner(System.in);
+        String answer = scan.next();
+        if (answer.equals("y")) {
+            addStudent();
+        }
+        if (answer.equals("n")) {
+            System.out.println(":(");
+        }
+    }
+    
+    public static double randomGrade() {
+        int minGrade = 10;
+        int maxGrade = 100;
+        
+        int number = generator.nextInt(maxGrade - minGrade + 1) + minGrade;
+        double grade = (double) number / 10;
+        return grade;
     }
     
     public static void printCSV(int[] count) throws FileNotFoundException{
@@ -164,4 +211,51 @@ public class StudentTest {
         System.out.println("File written!");
     }
     
+    public static void addStudent() {
+        studentNumberStart++;
+        Student student = new Student(studentNumberStart, randomGrade());
+        Klas group = firstGroup;
+        
+        for (int i = 0; i < groupMap.size(); i++) {
+            if (group.getSize() < 32) {
+                break;
+            } else {
+                group = group.getNext();
+            }
+        }
+        StuNumbComparator snc = new StuNumbComparator();
+        Student temp = group.getFirst();
+        for (int i = 0; i < group.getSize(); i++) {
+            if (snc.compare(student, temp) == 1) {
+                if (temp.getNext() == null || snc.compare(student, temp.getNext()) == -1) {
+                    Student tempNext = temp.getNext();
+                    temp.setNext(student);
+                    student.setNext(tempNext);
+                    if (student.getNext() == null) {
+                        group.setLast(student);
+                    }
+                } else {
+                    temp = temp.getNext();
+                }
+            } else {
+                student.setNext(temp);
+                group.setFirst(student);
+            }
+        }
+        
+        System.out.println("Student added to group: " + group);
+        System.out.println("");
+    }
+    
+    public static class StuNumbComparator implements Comparator<Student> {
+
+        @Override
+        public int compare(Student s1, Student s2) {            
+            Integer n1 = s1.getStudentNumber();
+            Integer n2 = s2.getStudentNumber();
+            
+            return n1.compareTo(n2);
+        }
+        
+    }
 }

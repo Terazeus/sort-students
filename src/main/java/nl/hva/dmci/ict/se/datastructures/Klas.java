@@ -10,6 +10,7 @@ public class Klas implements Comparable<Klas>{
     private Student firstStudent;
     private Student lastStudent;
     private Klas next;
+    private Klas previous;
     
     public Klas(String name) {
         this.name = name;
@@ -21,6 +22,10 @@ public class Klas implements Comparable<Klas>{
     
     public void increaseSize() {
         size++;
+    }
+
+    public int getSize() {
+        return size;
     }
 
     public Student getFirst() {
@@ -45,6 +50,14 @@ public class Klas implements Comparable<Klas>{
 
     public void setNext(Klas next) {
         this.next = next;
+    }
+
+    public Klas getPrevious() {
+        return previous;
+    }
+
+    public void setPrevious(Klas previous) {
+        this.previous = previous;
     }
     
     @Override
