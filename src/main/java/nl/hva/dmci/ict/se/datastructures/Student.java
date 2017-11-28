@@ -12,7 +12,7 @@ public class Student implements Comparable<Student>{
     private Student next;
 
     public Student(int studentNummer, double cijfer) {
-        if (studentNummer >= 50080001) {
+        if (studentNummer >= 50060001) {
             this.studentNumber = studentNummer;
         } else {
             throw new IllegalArgumentException("Het studentnummer moet groter zijn dan 5008001");
@@ -54,8 +54,8 @@ public class Student implements Comparable<Student>{
         if (this.cijfer > student.cijfer) return 1;
         else if (this.cijfer < student.cijfer) return -1;
         else {
-            if (this.studentNumber > student.studentNumber) return 1;
-            else return -1;
+            if (this.studentNumber > student.studentNumber) return -1;
+            else return 1;
         }
     }
 }

@@ -23,7 +23,6 @@ public class StudentTest {
     private static int studentNumberStart = 50080001;
     
     public static void main(String[] args) {
-//        int studentNumberStart = 50080001;
         final int numberOfStudents = 321;
         
         List<Student> school = new ArrayList<>();
@@ -41,8 +40,6 @@ public class StudentTest {
         /**
          * Makes a linked list of the groups.
          */
-//        Klas firstGroup = null;
-//        Klas lastGroup = null;
         for (Klas klas : groupMap.values()) {
             if (firstGroup == null) {
                 firstGroup = klas;
@@ -59,15 +56,8 @@ public class StudentTest {
         /**
          * Assign students to school with random grade and ascending student
          * number.
-         */
-//        Random generator = new Random();
-//        int minGrade = 10;
-//        int maxGrade = 100;
-        
-        for (int i = 0; i < numberOfStudents; i++) {
-//            int number = generator.nextInt(maxGrade - minGrade + 1) + minGrade;
-//            double grade = (double)number / 10;
-            
+         */        
+        for (int i = 0; i < numberOfStudents; i++) {            
             school.add(new Student(studentNumberStart, randomGrade()));
             studentNumberStart++;
         }
