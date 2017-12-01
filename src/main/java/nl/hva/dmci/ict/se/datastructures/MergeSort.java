@@ -2,6 +2,7 @@ package nl.hva.dmci.ict.se.datastructures;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -26,10 +27,10 @@ public class MergeSort {
         
         // Shuffle the list.
         Collections.shuffle(school);
-        //System.out.println("Before sorting:\n");
-        //print(school);
+        System.out.println("Before sorting:\n");
+        print(school);
         
-        // Merge sort the list and time it.
+        //Merge sort the list and time it.
         long total = 0;
         for (int i = 0; i < AMOUNT; i++) {
             long startTime = System.nanoTime();
@@ -41,9 +42,12 @@ public class MergeSort {
         }
         long average;
         System.out.println("The average execution time is " + total / (AMOUNT * 1000000) + " ms");
+       
+
+        school = mergeSort(school);
         
-        //System.out.println("\nAfter sorting:\n");
-        //print(school);
+        System.out.println("\nAfter sorting:\n");
+        print(school);
     }
     /**
      * This method uses the Random class to generate a random double with two
@@ -70,6 +74,8 @@ public class MergeSort {
         int size = school.size();
         if (size <= 1) {
             return school;
+        }else if (size <= 10) {
+            return insertionSort(school);
         } else {
             int center = school.size() / 2;
             List<Student> left = new ArrayList<>();
@@ -85,6 +91,29 @@ public class MergeSort {
             return merge(left, right);
         }
     }
+
+    /**
+     * Insertionsort as List of Students.
+     *
+     * @param  school
+     * @return sortedList
+     */
+    public static List<Student> insertionSort(List<Student> school) {
+        int i = 1;
+        while (i < school.size()) {
+            int j = i;
+            while (j > 0 && school.get(j-1).compareTo(school.get(j)) > 0){
+                Student sw = school.get(j);
+                school.set(j, school.get(j-1));
+                school.set(j-1, sw);
+                j--;
+            }
+            i++;
+        }
+
+        return school;
+    }
+
     /**
      * This methods merges two sublists using the compareTo method in the
      * Student class.
@@ -116,17 +145,8 @@ public class MergeSort {
     }
     
     public static void print(List<Student> school) {
-        for (int i = 0; i < school.size()/3 + 1; i++) {
-            Student first = school.get(i);
-            Student second = school.get(i + school.size()/3 + 1);
-            Student third;
-            try {
-                third = school.get(i + 2 * (school.size() / 3 + 1));
-            } catch (Exception e) {
-                third = null;
-            }
-            
-            System.out.println(first + "  " + second + "  " + third);
-        }
+        school.forEach((Student student) -> {
+            System.out.println(student);
+        });
     }
 }
