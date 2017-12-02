@@ -13,6 +13,7 @@ import java.util.Random;
  */
 public class MergeSort {
     public static final int AMOUNT = 100;
+    public static final int CUTOFF = 10;
     
     public static void main(String[] args) {
         // First make a list of students with random grades.
@@ -27,8 +28,8 @@ public class MergeSort {
         
         // Shuffle the list.
         Collections.shuffle(school);
-        System.out.println("Before sorting:\n");
-        print(school);
+        //System.out.println("Before sorting:\n");
+        //print(school);
         
         //Merge sort the list and time it.
         long total = 0;
@@ -44,10 +45,9 @@ public class MergeSort {
         System.out.println("The average execution time is " + total / (AMOUNT * 1000000) + " ms");
        
 
-        school = mergeSort(school);
-        
-        System.out.println("\nAfter sorting:\n");
-        print(school);
+        //school = mergeSort(school);
+        //System.out.println("\nAfter sorting:\n");
+        //print(school);
     }
     /**
      * This method uses the Random class to generate a random double with two
@@ -72,9 +72,7 @@ public class MergeSort {
      */
     public static List<Student> mergeSort(List<Student> school) {
         int size = school.size();
-        if (size <= 1) {
-            return school;
-        }else if (size <= 10) {
+        if (size <= CUTOFF) {
             return insertionSort(school);
         } else {
             int center = school.size() / 2;
