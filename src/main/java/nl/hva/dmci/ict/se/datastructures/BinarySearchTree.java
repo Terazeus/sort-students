@@ -6,12 +6,7 @@ package nl.hva.dmci.ict.se.datastructures;
  * BST with API as described in Sedgewick and Wayne.
  */
 public class BinarySearchTree <Key extends Comparable<Key>, Value> {
-
     protected Node root;
-
-    public BinarySearchTree() {
-        
-    }
 
     protected int size (Node node) {
         return node == null ? 0 : node.getSubTreeAmount();
@@ -34,7 +29,7 @@ public class BinarySearchTree <Key extends Comparable<Key>, Value> {
             return 0;
 
         int comparison = node.getKey().compareTo(key);
-        
+
         if (comparison > 0) {
             return rank(key, node.getLeft());
         } else if (comparison < 0) {
@@ -49,7 +44,7 @@ public class BinarySearchTree <Key extends Comparable<Key>, Value> {
             return null;
 
         int comparison = node.getKey().compareTo(key);
-        
+
         if (comparison > 0) {
             return get(node.getLeft(), key);
         } else if (comparison < 0) {
@@ -66,7 +61,7 @@ public class BinarySearchTree <Key extends Comparable<Key>, Value> {
     protected Node put(Node node, Key key, Value value){
         if (node == null)
             return new Node(value, key, 1);
-        
+
         int comparison = node.getKey().compareTo(key);
 
         if (comparison > 0) {
@@ -88,7 +83,7 @@ public class BinarySearchTree <Key extends Comparable<Key>, Value> {
         private Value value;
         private Key key;
         private int subTreeAmount;
-        
+
         // Nodes
         private Node left;
         private Node right;

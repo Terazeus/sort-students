@@ -3,6 +3,7 @@ package nl.hva.dmci.ict.se.datastructures;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -20,23 +21,23 @@ import java.util.function.Predicate;
  */
 public class MergeSort {
     public static final int AMOUNT = 100;
-    
+
     public static void main(String[] args) {
         // First make a list of students with random grades.
         final int NUMBER_OF_STUDENTS = Integer.parseInt(args[0]);
         int studentNumberStart = 50060001;
         List<Student> school = new ArrayList<>();
-        
-        for (int i = 0; i < NUMBER_OF_STUDENTS; i++) {            
+
+        for (int i = 0; i < NUMBER_OF_STUDENTS; i++) {
             school.add(new Student(studentNumberStart, randomGrade()));
             studentNumberStart++;
         }
-        
+
         // Shuffle the list.
         Collections.shuffle(school);
         System.out.println("Before sorting:");
         print(school);
-        
+
         //Merge sort the list and time it.
         long total = 0;
         for (int i = 0; i < AMOUNT; i++) {
@@ -49,10 +50,10 @@ public class MergeSort {
         }
         long average;
         System.out.println("The average execution time is " + total / (AMOUNT * 1000000) + " ms");
-       
+
 
         school = mergeSort(school);
-        
+
         System.out.println("\nAfter sorting:");
         print(school);
 
@@ -60,11 +61,13 @@ public class MergeSort {
          * Testing the Binary search tree
          */
         StudentBinarySearchTree bst = new StudentBinarySearchTree();
-        Set<Double> grades = new HashSet<>();
+        Set<Double> grades          = new HashSet<>();
+        ArrayList<Double> gradeList = new ArrayList<>();
 
         school.forEach((Student student) -> {
             bst.put(student.getCijfer(), student.getStudentNumber());
-            grades.add(student.getCijfer());
+            if (grades.add(student.getCijfer()))
+                gradeList.add(student.getCijfer());
         });
 
         final List<Student> locSchool = school;
@@ -72,21 +75,38 @@ public class MergeSort {
             System.out.printf("==== Studenten met cijfer %f ====\n\n", grade);
 
             System.out.println("Voor BST:");
-            filter(locSchool, (Student student) -> {
-                return grade == student.getCijfer();
-            }).forEach((Student student) -> {
-                System.out.printf(
-                        "Studentnr: %d cijfer: %f\n", 
-                        student.getStudentNumber(), 
-                        student.getCijfer());
-            });
+            filter(locSchool, (Student student) -> grade == student.getCijfer())
+                .forEach((Student student) -> {
+                    System.out.printf(
+                            "Studentnr: %d cijfer: %f\n",
+                            student.getStudentNumber(),
+                            student.getCijfer());
+                });
 
             System.out.println("\n\nNa BST:");
-            bst.get(grade).forEach((Integer snr) -> {
-                System.out.printf( "Studentnr: %d cijfer: %f\n", snr, grade);
-            });
+            bst.get(grade).forEach((Integer snr) ->
+                    System.out.printf( "Studentnr: %d cijfer: %f\n", snr, grade));
 
         });
+
+        /**
+         * Testing the rank() function
+         */
+        System.out.println("==== Testing rank() ====");
+        gradeList.sort(new Comparator<Double>(){
+            public int compare (Double d1, Double d2) {
+                return d1.compareTo(d2);
+            }
+        });
+
+        for (int i = 0; i < gradeList.size(); i++) {
+            System.out.println("Grade is: "
+                    + gradeList.get(i)
+                    + " rank should be: "
+                    + i
+                    + " rank is: "
+                    + bst.rank(gradeList.get(i)));
+        }
 
     }
 
@@ -100,6 +120,7 @@ public class MergeSort {
      */
     public static List<Student> filter (List<Student> students, Predicate<Student> filter) {
        List<Student> filteredStudents = new ArrayList<>();
+
         students.forEach((Student student) -> {
             if (filter.test(student)){
                 filteredStudents.add(student);
@@ -118,7 +139,7 @@ public class MergeSort {
         final Random GENERATOR = new Random();
         int minGrade = 10;
         int maxGrade = 100;
-        
+
         int number = GENERATOR.nextInt(maxGrade - minGrade + 1) + minGrade;
         double grade = (double) number / 10;
         return grade;
@@ -146,7 +167,7 @@ public class MergeSort {
             for (int i = center; i < school.size(); i++) {
                 right.add(school.get(i));
             }
-            left = mergeSort(left);
+            left  = mergeSort(left);
             right = mergeSort(right);
             return merge(left, right);
         }
@@ -186,7 +207,7 @@ public class MergeSort {
         int leftIndex = 0;
         int rightIndex = 0;
         int total = left.size() + right.size();
-        
+
         for (int i = 0; i < total; i++) {
             if (leftIndex >= left.size()) {
                 merge.add(right.get(rightIndex++));
@@ -203,7 +224,7 @@ public class MergeSort {
         }
         return merge;
     }
-    
+
     public static void print(List<Student> school) {
         school.forEach((Student student) -> {
             System.out.println(student);
