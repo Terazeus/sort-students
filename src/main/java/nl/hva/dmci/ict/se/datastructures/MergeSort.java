@@ -1,13 +1,20 @@
 package nl.hva.dmci.ict.se.datastructures;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.function.BooleanSupplier;
+import java.util.function.Predicate;
 
 /**
  * @author Donny Rozendal
+ * @author Hugo Thunnissen
+ *
  * This program takes a list of students and grades, and sorts them using the
  * Merge Sorting method.
  */
@@ -30,6 +37,8 @@ public class MergeSort {
         Collections.shuffle(school);
         //System.out.println("Before sorting:\n");
         //print(school);
+        System.out.println("Before sorting:");
+        print(school);
         
         //Merge sort the list and time it.
         long total = 0;
@@ -45,10 +54,69 @@ public class MergeSort {
         System.out.println("The average execution time is " + total / (AMOUNT * 1000000) + " ms");
        
 
+
         //school = mergeSort(school);
         //System.out.println("\nAfter sorting:\n");
         //print(school);
+
+        school = mergeSort(school);
+        
+        System.out.println("\nAfter sorting:");
+        print(school);
+
+        /**
+         * Testing the Binary search tree
+         */
+        StudentBinarySearchTree bst = new StudentBinarySearchTree();
+        Set<Double> grades = new HashSet<>();
+
+        school.forEach((Student student) -> {
+            bst.put(student.getCijfer(), student.getStudentNumber());
+            grades.add(student.getCijfer());
+        });
+
+        final List<Student> locSchool = school;
+        grades.forEach((Double grade) -> {
+            System.out.printf("==== Studenten met cijfer %f ====\n\n", grade);
+
+            System.out.println("Voor BST:");
+            filter(locSchool, (Student student) -> {
+                return grade == student.getCijfer();
+            }).forEach((Student student) -> {
+                System.out.printf(
+                        "Studentnr: %d cijfer: %f\n", 
+                        student.getStudentNumber(), 
+                        student.getCijfer());
+            });
+
+            System.out.println("\n\nNa BST:");
+            bst.get(grade).forEach((Integer snr) -> {
+                System.out.printf( "Studentnr: %d cijfer: %f\n", snr, grade);
+            });
+
+        });
+
     }
+
+    /**
+     * Filter a list  of students for students that match a predicate.
+     *
+     * @param students
+     * @param filter
+     *
+     * @return filteredStudents
+     */
+    public static List<Student> filter (List<Student> students, Predicate<Student> filter) {
+       List<Student> filteredStudents = new ArrayList<>();
+        students.forEach((Student student) -> {
+            if (filter.test(student)){
+                filteredStudents.add(student);
+            }
+        });
+
+        return filteredStudents;
+    }
+
     /**
      * This method uses the Random class to generate a random double with two
      * decimals.
@@ -146,5 +214,30 @@ public class MergeSort {
         school.forEach((Student student) -> {
             System.out.println(student);
         });
+    }
+
+    private static class StudentBinarySearchTree extends BinarySearchTree<Double, ArrayList<Integer>> {
+
+        public void put (Double key, Integer value) {
+            root = put(root, key, value);
+        }
+
+        private Node put (Node node, Double key, Integer value) {
+            System.out.println("Putting");
+            if (node == null)
+                return new Node(new ArrayList<Integer>(Arrays.asList(value)), key, 1);
+
+            int comparison = node.getKey().compareTo(key);
+
+            if (comparison > 0) {
+                node.setLeft(put(node.getLeft(), key, value));
+            } else if (comparison < 0) {
+                node.setRight(put(node.getRight(), key, value));
+            } else {
+                node.getValue().add(value);
+            }
+            node.setSubTreeAmount(size(node.getLeft()) + size(node.getRight()) + 1);
+            return node;
+        }
     }
 }
